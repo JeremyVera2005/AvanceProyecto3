@@ -12,6 +12,8 @@ const Productos = () => {
   const [search, setSearch] = useState("");
   const [form, setForm] = useState({ nombre: "", precio: "", descripcion: "", proveedor1: "", proveedor2: "" });
   const [editId, setEditId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const fetchData = async () => {
     setLoading(true);
@@ -236,35 +238,107 @@ const Productos = () => {
         </div>
       )}
 
-      {/* Modal crear/editar */}
-      {editId !== null && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md animate-slide-in overflow-hidden p-6 space-y-3">
-            <h3 className="text-xl font-semibold mb-4 text-center">{editId ? "Editar Producto" : "Nuevo Producto"}</h3>
-            <form onSubmit={handleSave} className="flex flex-col gap-3">
-              <input type="text" placeholder="Nombre" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="border p-2 rounded shadow-sm"/>
-              <input type="number" placeholder="Precio" value={form.precio} onChange={(e) => setForm({ ...form, precio: e.target.value })} className="border p-2 rounded shadow-sm"/>
-              <input type="text" placeholder="Descripción" value={form.descripcion} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} className="border p-2 rounded shadow-sm"/>
-              
-              <select value={form.proveedor1} onChange={(e) => setForm({ ...form, proveedor1: e.target.value })} className="border p-2 rounded shadow-sm">
-                <option value="">Proveedor principal</option>
-                {proveedores.map((prov) => <option key={prov.id} value={prov.nombre}>{prov.nombre}</option>)}
-              </select>
-              <select value={form.proveedor2} onChange={(e) => setForm({ ...form, proveedor2: e.target.value })} className="border p-2 rounded shadow-sm">
-                <option value="">Proveedor secundario</option>
-                {proveedores.map((prov) => <option key={prov.id} value={prov.nombre}>{prov.nombre}</option>)}
-              </select>
+     {/* Modal crear/editar */}
+{isModalOpen && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
+    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md animate-slide-in overflow-hidden p-6 space-y-3">
+      <h3 className="text-xl font-semibold mb-4 text-center">
+        {editId ? "Editar Producto" : "Nuevo Producto"}
+      </h3>
 
-              <div className="flex justify-end gap-2 mt-2">
-                <button type="button" onClick={() => setEditId(null)} className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg">Cancelar</button>
-                <button type="submit" className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg">Guardar</button>
-              </div>
-            </form>
-          </div>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          await handleSave(e); // ejecuta tu lógica de guardado
+          setIsModalOpen(false); // 🔹 cierra el modal al guardar
+        }}
+        className="flex flex-col gap-3"
+      >
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={form.nombre}
+          onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+          className="border p-2 rounded shadow-sm"
+        />
+        <input
+          type="number"
+          placeholder="Precio"
+          value={form.precio}
+          onChange={(e) => setForm({ ...form, precio: e.target.value })}
+          className="border p-2 rounded shadow-sm"
+        />
+        <input
+          type="text"
+          placeholder="Descripción"
+          value={form.descripcion}
+          onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+          className="border p-2 rounded shadow-sm"
+        />
+
+        <select
+          value={form.proveedor1}
+          onChange={(e) =>
+            setForm({ ...form, proveedor1: e.target.value })
+          }
+          className="border p-2 rounded shadow-sm"
+        >
+          <option value="">Proveedor principal</option>
+          {proveedores.map((prov) => (
+            <option key={prov.id} value={prov.nombre}>
+              {prov.nombre}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={form.proveedor2}
+          onChange={(e) =>
+            setForm({ ...form, proveedor2: e.target.value })
+          }
+          className="border p-2 rounded shadow-sm"
+        >
+          <option value="">Proveedor secundario</option>
+          {proveedores.map((prov) => (
+            <option key={prov.id} value={prov.nombre}>
+              {prov.nombre}
+            </option>
+          ))}
+        </select>
+
+        <div className="flex justify-end gap-2 mt-2">
+          <button
+            type="button"
+            onClick={() => {
+              setIsModalOpen(false);
+              setEditId(null);
+              setForm({
+                nombre: "",
+                precio: "",
+                descripcion: "",
+                proveedor1: "",
+                proveedor2: "",
+              });
+            }}
+            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg"
+          >
+            Guardar
+          </button>
         </div>
-      )}
+      </form>
+    </div>
+  </div>
+)}
+
     </section>
   );
 };
 
 export default Productos;
+
