@@ -32,7 +32,7 @@ const update = async (id, payload) => {
 
 const remove = async (id) => {
   try {
-    const res = await baseApi.delete(`/usuarios/${id}`);
+    const res = await baseApi.delete(`/users/${id}`);
     return res.data;
   } catch (err) {
     console.error(`❌ Error al eliminar usuario ${id}:`, err);
